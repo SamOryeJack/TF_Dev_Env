@@ -1,16 +1,4 @@
 #!/bin/bash
-log=log_file.txt
- 
-# create log file or overrite if already present
-printf "Log File - " > $log
- 
-# append date to log file
-date >> $log
- 
-x=$(( 3 + 1 ))
-# append some data to log file
-echo value of x is $x >> $log
-
 sudo apt-get update 
 sudo apt-get upgrade y
 sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
