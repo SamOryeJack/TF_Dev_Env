@@ -96,6 +96,6 @@ resource "aws_security_group" "this_sg" {
 }
 
 resource "aws_key_pair" "this_key_pair" {
-  key_name   = "thiskey"
+  key_name   = "this-key"
   public_key = file("~/.ssh/thiskey.pub")
 }
