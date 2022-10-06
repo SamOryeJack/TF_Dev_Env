@@ -1,3 +1,21 @@
+resource "aws_instance" "this_ec2" {
+  ami           = data.aws_ami.this_ami.id
+  instance_type = "t2.micro"
+  key_name = aws_key_pair.this_key_pair.id
+  vpc_security_group_ids = [aws_security_group.this_sg.id]
+  subnet_id = aws_subnet.this_subnet.id
+
+  root_block_device {
+    volume_size = 10
+  }
+
+  tags = {
+    Name = "this_ec2"
+  }
+
+
+}
+
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -68,4 +86,9 @@ resource "aws_security_group" "this_sg" {
   tags = {
     Name = "this_sg"
   }
+}
+
+resource "aws_key_pair" "this_key_pair" {
+  key_name   = "this-key"
+  public_key = file("~/.ssh/thiskey.pub")
 }
