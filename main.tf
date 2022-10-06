@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "first_subnet" {
+resource "aws_subnet" "this_subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
@@ -26,7 +26,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_route_table" "first_route_table" {
+resource "aws_route_table" "this_route_table" {
   vpc_id = aws_vpc.main.id
 
   tags = {
@@ -34,13 +34,38 @@ resource "aws_route_table" "first_route_table" {
   }
 }
 
-resource "aws_route" "first_route" {
-  route_table_id         = aws_route_table.first_route_table.id
+resource "aws_route" "this_route" {
+  route_table_id         = aws_route_table.this_route_table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-resource "aws_route_table_association" "first_rta" {
-  subnet_id      = aws_subnet.first_subnet.id
-  route_table_id = aws_route_table.first_route_table.id
+resource "aws_route_table_association" "this_rta" {
+  subnet_id      = aws_subnet.this_subnet.id
+  route_table_id = aws_route_table.this_route_table.id
+}
+
+resource "aws_security_group" "this_sg" {
+  name        = "Allow this sg traffic"
+  description = "Allow this_sg inbound traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "this_sg"
+  }
 }
