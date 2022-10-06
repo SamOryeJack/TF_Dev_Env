@@ -27,15 +27,20 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_route_table" "first_route_table" {
-    vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
 
-    tags = {
-        Name = "dev-rt-pub1"
-    }
+  tags = {
+    Name = "dev-rt-pub1"
+  }
 }
 
 resource "aws_route" "first_route" {
-  route_table_id            = aws_route_table.first_route_table.id
-  destination_cidr_block    = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.igw.id
+  route_table_id         = aws_route_table.first_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "first_rta" {
+  subnet_id      = aws_subnet.first_subnet.id
+  route_table_id = aws_route_table.first_route_table.id
 }
