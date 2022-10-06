@@ -13,6 +13,15 @@ resource "aws_instance" "this_ec2" {
   tags = {
     Name = "this_ec2"
   }
+
+  provisioner "local-exec" {
+    command = templatefile("linux-ssh-config.tpl", {
+        hostname = self.public_ip,
+        user = "ubuntu",
+        identityfile = "~/.ssh/thiskey"
+    })
+    interpreter = ["bash", "-c"]
+  }
 }
 
 resource "aws_vpc" "main" {
