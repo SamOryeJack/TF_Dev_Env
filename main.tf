@@ -4,6 +4,7 @@ resource "aws_instance" "this_ec2" {
   key_name = aws_key_pair.this_key_pair.id
   vpc_security_group_ids = [aws_security_group.this_sg.id]
   subnet_id = aws_subnet.this_subnet.id
+  user_data = file("docker.sh")
 
   root_block_device {
     volume_size = 10
@@ -12,8 +13,6 @@ resource "aws_instance" "this_ec2" {
   tags = {
     Name = "this_ec2"
   }
-
-
 }
 
 resource "aws_vpc" "main" {
@@ -76,11 +75,19 @@ resource "aws_security_group" "this_sg" {
     cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
+  ingress {
+    description = "ssh access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -89,6 +96,6 @@ resource "aws_security_group" "this_sg" {
 }
 
 resource "aws_key_pair" "this_key_pair" {
-  key_name   = "this-key"
+  key_name   = "thiskey"
   public_key = file("~/.ssh/thiskey.pub")
 }
